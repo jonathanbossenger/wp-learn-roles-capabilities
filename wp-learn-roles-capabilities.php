@@ -1,6 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Learn Roles and Capabilities
+ * Version: 1.0.0
  */
 
 /**
