@@ -1,6 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Learn Roles and Capabilities
+ * Version: 1.0.1
  */
 
 /**
@@ -30,4 +31,48 @@ function wp_learn_render_admin_page() {
 		</pre>
     </div>
 	<?php
+}
+
+/**
+ * Adding plugin capabilities to the editor role
+ */
+register_activation_hook( __FILE__, 'wp_learn_add_custom_caps' );
+function wp_learn_add_custom_caps() {
+	$role = get_role( 'editor' );
+	$role->add_cap( 'activate_plugins' );
+	$role->add_cap( 'update_plugins' );
+}
+
+/**
+ * Removing plugin capabilities from the editor role
+ */
+register_deactivation_hook( __FILE__, 'wp_learn_remove_custom_caps' );
+function wp_learn_remove_custom_caps() {
+	$role = get_role( 'editor' );
+	$role->remove_cap( 'activate_plugins' );
+	$role->remove_cap( 'update_plugins' );
+}
+
+/**
+ * Adding a custom assistant role
+ */
+register_activation_hook( __FILE__, 'wp_learn_add_custom_role' );
+function wp_learn_add_custom_role() {
+	add_role(
+		'assistant',
+		'Assistant',
+		array(
+			'read'             => true,
+			'activate_plugins' => true,
+			'update_plugins'   => true,
+		),
+	);
+}
+
+/**
+ * Removing the custom assistant role
+ */
+register_deactivation_hook( __FILE__, 'wp_learn_remove_custom_role' );
+function wp_learn_remove_custom_role() {
+	remove_role( 'assistant' );
 }
