@@ -33,10 +33,12 @@ function wp_learn_submenu() {
  */
 function wp_learn_render_admin_page() {
 	$author_role = get_role( 'author' );
+	$writer = get_role( 'writer' );
 	?>
     <div class="wrap" id="wp_learn_admin">
         <h1>Roles</h1>
         <pre style="font-size: 22px; line-height: 1.2;"><?php print_r( $author_role  ) ?></pre>
+        <pre style="font-size: 22px; line-height: 1.2;"><?php print_r( $writer  ) ?></pre>
     </div>
 	<?php
 }
@@ -62,9 +64,21 @@ function wp_learn_render_story_cpt() {
  */
 register_activation_hook( __FILE__, 'wp_learn_add_custom_caps' );
 function wp_learn_add_custom_caps() {
-	$role = get_role( 'editor' );
-	$role->add_cap( 'activate_plugins' );
-	$role->add_cap( 'update_plugins' );
+	$role = get_role( 'administrator' );
+	$capabilities = array(
+		'edit_story',
+		'read_story',
+		'delete_stories',
+		'edit_stories',
+		'edit_others_stories',
+		'delete_stories',
+		'publish_stories',
+		'read_private_stories',
+		'edit_stories',
+	);
+    foreach ( $capabilities as $capability ) {
+        $role->add_cap( $capability );
+    }
 }
 
 /**
@@ -72,9 +86,21 @@ function wp_learn_add_custom_caps() {
  */
 register_deactivation_hook( __FILE__, 'wp_learn_remove_custom_caps' );
 function wp_learn_remove_custom_caps() {
-	$role = get_role( 'editor' );
-	$role->remove_cap( 'activate_plugins' );
-	$role->remove_cap( 'update_plugins' );
+	$role = get_role( 'administrator' );
+	$capabilities = array(
+		'edit_story',
+		'read_story',
+		'delete_stories',
+		'edit_stories',
+		'edit_others_stories',
+		'delete_stories',
+		'publish_stories',
+		'read_private_stories',
+		'edit_stories',
+	);
+    foreach ( $capabilities as $capability ) {
+        $role->remove_cap( $capability );
+    }
 }
 
 /**
@@ -83,12 +109,14 @@ function wp_learn_remove_custom_caps() {
 register_activation_hook( __FILE__, 'wp_learn_add_custom_role' );
 function wp_learn_add_custom_role() {
 	add_role(
-		'assistant',
-		'Assistant',
+		'writer',
+		'Writer',
 		array(
-			'read'             => true,
-			'activate_plugins' => true,
-			'update_plugins'   => true,
+			'read'                     => true,
+			'edit_stories'             => true,
+			'edit_published_stories'   => true,
+			'publish_stories'          => true,
+			'delete_published_stories' => true,
 		),
 	);
 }
@@ -98,7 +126,7 @@ function wp_learn_add_custom_role() {
  */
 register_deactivation_hook( __FILE__, 'wp_learn_remove_custom_role' );
 function wp_learn_remove_custom_role() {
-	remove_role( 'assistant' );
+	remove_role( 'writer' );
 }
 
 add_action( 'init', 'wp_learn_init' );
@@ -122,6 +150,7 @@ function wp_learn_init() {
 				'custom-fields',
 			),
             'capability_type' => array( 'story', 'stories' ),
+			'map_meta_cap'    => true,
 		)
 	);
 }
