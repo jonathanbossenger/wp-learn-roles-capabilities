@@ -121,6 +121,7 @@ function wp_learn_init() {
 				'editor',
 				'custom-fields',
 			),
+            'capability_type' => array( 'story', 'stories' ),
 		)
 	);
 }
